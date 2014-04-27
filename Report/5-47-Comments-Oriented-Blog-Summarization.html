@@ -1,0 +1,350 @@
+<!doctype html>
+
+<!--
+
+IMPORTANT INSTRUCTIONS
+
+Do Not Modify Any HTML Tags or Style Sheet Elements
+Do Not create any new DIV tags
+
+The final report should be 2000-3000 words long
+
+Save your HTML file as <Project#>-<Group#>-Project-Title.html
+e.g. 13-31-Mining-Named-Entities.html
+
+
+You can use following tags:-
+> List Elements : ul/ol/li
+> Image : img
+> Content Elements : Span
+> Header Tags : H1, H2, H3, H4
+> Formatting Tags : b, i, u
+> Special Characters : &copy; &quot; etc
+
+To include mathematics, use other tools to create formulae and put the image here
+
+
+
+-->
+
+
+<html lang="en">
+<head>
+    <title> Comments Oriented Blog Summarization </title>
+    <link href="IRE2014styles.css" type="stylesheet" rel="stylesheet">
+</head>
+<body>
+    <div class="ire2014_container">
+    <h2 class="ire2014_h2">Comments Oriented Blog Summarization</h2>
+    <h4 class="ire2014_h4">Group Number : 47 | Project Number : 5 </h4>
+    <div class="ire2014_authors">
+        <div class="ire2014_authorname">
+            Dilwar SK (201305652) <br>
+            dilwarhossain.sk@students.iiit.ac.in
+        </div>
+        
+        <div class="ire2014_authorname">
+            Ritika Tanwani (201101153) <br>
+            ritika.tanwani@students.iiit.ac.in
+        </div>
+
+        <div class="ire2014_authorname">
+            Tejas Shah (201102073) <br>
+            tejas.shah@students.iiit.ac.in
+        </div>
+
+        <div class="ire2014_authorname">
+            Tohar Patel (201305605) <br>
+            tohar.patel@students.iiit.ac.in
+        </div>
+
+    </div>
+    
+    <div class="ire2014_abstract">
+        Comments are very important part of blog posts. Most of the research done on blog 
+        summarization didn’t consider comments.   Comments gives the general view of 
+        readers and can be used to identify most   relevant sentences from original post. The 
+        proposed solution is to derive relevant   comments and then retrieve post sentences 
+        mostly referred to by these comments. The   relevant comments are identified by 
+        ReT(Response and Topic)   graph and   named entities similarity score. Followed 
+        by summation-based sentence selection   showed promising results. 
+
+    </div>
+    
+    <div class="ire2014_report">
+        <h3 class="ire2014_h3">1. Introduction</h3>
+        Most of the blogs have comments associated with them. A recent study on
+        blog conversation showed that readers treat comments associated with a post as an
+        inherent part of the post [2]. These comments gives the general opinion about
+        the blog post and this knowledge can then be used to extract most relevant sentences
+        from the blog post.
+        
+        <h3 class="ire2014_h3">2. Problem Statement & Related Work</h3>
+        Given a document D consisting of a set of sentences D ={s1 , s2 , . . . , sn }, and a
+        set of comments C = {c1 , c2 , . . . , cl } associated with D, the task of comments-oriented document summarization is to extract a subset of sentences from D, denoted by Sc (Sc ⊂ D), 
+        that best represents the topic(s) presented in D and discussed among its comments C. <br/><br/>
+
+        We have referred the  ReQuT (i.e., Reader, Quotation,and Topic) model of Meishan Hu, Aixin Sun and Ee-Peng Lim ,Centre for Advanced Information Systems, School of Computer Engineering,Nanyang Technological University, Singapore as the base model for the summary generation.
+
+        We have augmented this ReQut with the Named Entity Recognition which is done by the stanford entity tagger (Stanford CoreNLP v1.3.4 – 2012-11-12).
+
+        
+        <h3 class="ire2014_h3">3. Approach</h3>
+        Each word in the comment gets a weight from the different factors. The words that
+        qualify a certain threshold are considered for the summary generation. <br/>
+        The factors are as follows : <br/>
+        A. Representative words extraction from
+        comments:
+        <ol>
+            <li>
+                Reader's authority: <br/>
+                The reader's authority is calculated as the number of distinct user that post a reply to
+                the users comment.<br/>
+                Contribution to the weight of the term = tf(term,ci) * A(ci) <br/>
+                where, <br/>
+                <ul>
+                    <li> tf(term,ci) is the term frequency of
+                the word in the comment ci</li>
+                    <li> A(ci) is the authority author of the                
+                comment ci</li>
+                </ul>
+            </li>
+            <br/>
+            <li>
+                Likes count: The number of likes to a comment <br/>
+                Contribution to the weight of the term = L(Ci) <br/>
+                where, <br/> 
+                    <ul>
+                        <li> L(Ci) = number of likes on the comment</li>
+                    </ul>
+            </li>
+            <br/>
+            <li>
+                Cluster: we have a algorithm that clusters the comments and a weight is assigned to a
+                cluster. <br/> 
+                Contribution to the weight of the term = tf(term,ci)*W(ci) <br/>
+                where, <br/> 
+                    <ul>
+                        <li> tf(term,ci) is the term frequency of the word in the comment ci</li>
+                        <li> W(ci) weight of the cluster to which the comment belongs</li>
+                    </ul>
+            </li>
+            <br/>
+            <li>
+                Reply count : The number of replies a comment has got.<br/>
+                Contribution to weight of the term = Rep(Ci)
+                where, <br/> 
+                    <ul>
+                        <li> Ci = number of replies to the comment Ci</li>
+                    </ul>
+            </li>
+            <br/>
+            <li>
+                Named Entity: All the named entities of blog post are identified by using Stanford
+                CoreNLP[2]. <br/>For each comment Named Entity Score E(Ci) is calculated as : <br/>
+                E(Ci) = Number of named entities in that comment <br/>
+                Contribution to the weight of the term = E(Ci) <br/>
+            </li>
+        </ol>
+
+        B. Top sentence extraction from Blog post:
+        <ol>
+            <li> The blog is divided into sentences.</li>
+            <li> Each sentence is then represented by a bag of words and weightage is given by <br/>
+            W(Si)=Sum(W(Ti))|Ti belongs to Si <br/>
+            where,
+            <ul>
+                <li> W(Si) = weightage of the sentence Si <li>
+                <li> W(Ti) = weightage of the term Ti as </li>
+            calculated in A.</li>
+            <li> A number of top weighted sentences is shown as the summary.</li>
+        </ol>
+
+
+        
+        <h4 class="ire2014_h4">3.1. Assumptions</h4>
+        Proposed Solution gives a good output summary for long blog posts and sufficient number of comments associated with it.
+        <br/><br/>
+        
+        <h4 class="ire2014_h4">3.2. Architecture</h4>
+        
+        Given a blog post and its comments, our solution consists of three modules (illustrated in the Figure  below): 
+        Sentence detection : splits blog post content into sentences.
+        Word representativeness :  measure weighs words appearing in comments.
+        Sentence selection : computes a representativeness score for each sentence based on representativeness of its contained words.
+        <figure >
+            <img src="5-47-images/approach.png">
+            <figcaption>Approach for summarizer </figcaption>
+        </figure>
+        
+        <h3 class="ire2014_h3">4. Evaluation and Results</h3>
+        Selected Blog Statistics Table:
+        <table>
+          <tr>
+            <th>Blog ID</th>
+            <th>Words in Post</th>
+            <th>Words in Manual Summary</th>
+            <th>No. of Comments</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>812</td>
+            <td>216</td>
+            <td>22</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>1516</td>
+            <td>352</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>1341</td>
+            <td>214</td>
+            <td>57</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>856</td>
+            <td>261</td>
+            <td>45</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>846</td>
+            <td>230</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>3656</td>
+            <td>453</td>
+            <td>52</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>414</td>
+            <td>137</td>
+            <td>43</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>1256</td>
+            <td>334</td>
+            <td>76</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>258</td>
+            <td>98</td>
+            <td>23</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>849</td>
+            <td>238</td>
+            <td>29</td>
+          </tr>
+        </table>
+        <br/><br/>
+    
+        F-Score (25%) Table:
+        <table>
+          <tr>
+            <th>Blog ID</th>
+            <th>ROUGE-1</th>
+            <th>ROUGE-2</th>
+            <th>ROUGE-F</th>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>0.55769</td>
+            <td>0.47573</td>
+            <td>0.53846</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>0.47126</td>
+            <td>0.35057</td>
+            <td>0.41429</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>0.5534</td>
+            <td>0.42718</td>
+            <td>0.49216</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>0.67358</td>
+            <td>0.55498</td>
+            <td>0.66321</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>0.42361</td>
+            <td>0.20139</td>
+            <td>0.44444</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>0.52381</td>
+            <td>0.47159</td>
+            <td>0.53403</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>0.61398</td>
+            <td>0.54795</td>
+            <td>0.40884</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>0.58707</td>
+            <td>0.43216</td>
+            <td>0.55722</td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td>0.70025</td>
+            <td>0.52525</td>
+            <td>0.75</td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>0.51196</td>
+            <td>0.36792</td>
+            <td>0.54286</td>
+          </tr>
+        </table>
+
+        <h3 class="ire2014_h3">5. Conclusion</h3>
+        Our proposed solution gives a good score for long blog posts and sufficient number of comments associated with it.
+        
+        
+        <div class="ire2014_ref">
+            <h3 class="ire2014_h3">References</h3>
+            <ol>
+                <li>Meishan Hu, Aixin Sun and Ee-Peng Lim "Comments-Oriented Blog Summarization by Sentence Extraction"</li>
+                <li>Stanford CoreNLP v1.3.4 – 2012-11-12</li>
+            </ol>
+        </div>
+        
+        <div class="ire2014_resources">
+            <h3 class="ire2014_h3">Resources</h3>
+            <h4>Code Base</h4>
+            <a href="https://github.com/tejasshah93/blog-summarization" class="ire2014_link">Github Repository for the Project</a>
+            
+            <h4>Slide Show</h4>
+            <a href="http://www.slideshare.net/tohar/yourprezi-33645214" class="ire2014_link">Slideshare Link</a>
+            
+            <h4>Video</h4>
+            <a href="https://www.youtube.com/watch?v=b__Ac0hhlqw" class="ire2014_link">Youtube Demo Link</a>
+        </div>
+        
+    </div>
+    
+    </div>
+</body>
+</html>
